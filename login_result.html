@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VetraDRR — Integrated Disaster Response</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="app.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { ink:'#090909', panel:'#111111', line:'#242424', ember:'#ff6b2c', ember2:'#ff8a52' }
+    }
+  }
+}
+</script>
+</head>
+<body class="bg-ink text-white min-h-screen">
+<div class="ambient"></div>
+<div class="max-w-[1500px] mx-auto px-5 lg:px-8 py-5 relative z-10">
+<header class="nav glass">
+  <a class="brand" href="index.php"><span class="brandmark">✦</span><span>Vetra<span class="orange">DRR</span></span></a>
+  <nav class="hidden md:flex gap-7 text-sm text-gray-400">
+    <a href="#overview">Overview</a><a href="#map">Geo Map</a><a href="#evacuation">Evacuation</a><a href="#relief">Relief Ledger</a>
+    <a href="sms.php">SMS Console</a>  </nav>
+  <div class="flex items-center gap-3">
+    <div class="hidden sm:block text-right text-[11px] text-gray-400">
+      <div class="font-semibold text-white">System Administrator</div>
+      <div>Admin</div>
+    </div>
+    <span class="live-dot"><i></i> System online</span>
+    <a class="btn btn-ghost" href="logout.php">Logout</a>
+  </div>
+</header>
+
+
+<section id="overview" class="hero">
+  <div class="hero-pill">Admin Command Console</div>
+  <h1>See risk before<br><span>it becomes crisis.</span></h1>
+  <p>One command center for household vulnerability, evacuation capacity, emergency SMS reports, resource deployment, and live weather intelligence.</p>
+  <div class="flex flex-wrap gap-3 mt-7">
+    <a href="#map" class="btn btn-orange">Open live risk map →</a>
+    <a href="https://zoom.earth/places/philippines/" target="_blank" class="btn btn-ghost">View satellite & radar</a>
+  </div>
+</section>
+
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+  <div class="stat glass"><span>Households mapped</span><strong>3</strong><small>pre-disaster registry</small></div>
+  <div class="stat glass"><span>Danger-zone households</span><strong class="orange">1</strong><small>priority for evacuation</small></div>
+  <div class="stat glass"><span>Evacuation occupancy</span><strong>66%</strong><small>464 / 700 people</small></div>
+  <div class="stat glass"><span>Relief distributed</span><strong>1,054</strong><small>of 1,800 tracked units</small></div>
+</section>
+
+<section id="map" class="grid lg:grid-cols-[1.55fr_.75fr] gap-4 mb-4">
+  <div class="panel overflow-hidden">
+    <div class="panel-head">
+      <div><h2>Geo Risk Command Map</h2><p>Household vulnerability + evacuation centers + operational zones</p></div>
+      <div class="flex gap-2"><button onclick="locateMap()" class="mini">Locate</button><a target="_blank" href="https://zoom.earth/places/philippines/" class="mini">Zoom Earth ↗</a></div>
+    </div>
+    <div id="mapCanvas"></div>
+    <div class="map-note"><span class="legend danger"></span> Danger <span class="legend caution"></span> Caution <span class="legend safe"></span> Safe <span class="legend center"></span> Evacuation center</div>
+  </div>
+  <aside class="panel p-5">
+    <div class="section-label">LIVE WEATHER INTELLIGENCE</div>
+    <h3 class="side-title">External satellite view</h3>
+    <p class="muted">Zoom Earth provides interactive satellite, radar, wind and storm-track views. Use it alongside verified local warnings and LGU instructions.</p>
+    <div class="sat-card">
+      <div class="sat-grid"></div>
+      <div><b>Philippines weather map</b><span>Satellite • Radar • Wind • Storms</span></div>
+      <a target="_blank" href="https://zoom.earth/places/philippines/" class="arrow">↗</a>
+    </div>
+    <div class="alert-card"><span class="pulse"></span><div><b>Command note</b><p>Map risk zones shown here are demo/local records. Connect an official warning feed before operational deployment.</p></div></div>
+  </aside>
+</section>
+
+<section id="evacuation" class="grid lg:grid-cols-2 gap-4 mb-4">
+  <div class="panel p-5">
+    <div class="panel-head no-border"><div><h2>Evacuation Capacity Matrix</h2><p>Redirect arrivals when thresholds are reached.</p></div><span class="badge orange-badge">LIVE</span></div>
+    <div class="space-y-3">
+            <div class="center-row">
+        <div class="flex justify-between gap-3"><div><b>Barangay Hall Gym</b><span>Barangay Central</span></div><strong>94%</strong></div>
+        <div class="progress"><div class="bg-red-500" style="width:94%"></div></div>
+        <div class="flex justify-between text-xs text-gray-500"><span>188 / 200 occupants</span><span>Warning</span></div>
+      </div>
+            <div class="center-row">
+        <div class="flex justify-between gap-3"><div><b>East Central School</b><span>Barangay East</span></div><strong>36%</strong></div>
+        <div class="progress"><div class="bg-emerald-400" style="width:36%"></div></div>
+        <div class="flex justify-between text-xs text-gray-500"><span>126 / 350 occupants</span><span>Open</span></div>
+      </div>
+            <div class="center-row">
+        <div class="flex justify-between gap-3"><div><b>West Community Center</b><span>Barangay West</span></div><strong>100%</strong></div>
+        <div class="progress"><div class="bg-red-500" style="width:100%"></div></div>
+        <div class="flex justify-between text-xs text-gray-500"><span>150 / 150 occupants</span><span>Full</span></div>
+      </div>
+          </div>
+  </div>
+  <div class="panel p-5">
+    <div class="panel-head no-border"><div><h2>Priority Household Queue</h2><p>Generated from risk + vulnerability fields.</p></div></div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Family</th><th>Purok</th><th>Risk</th><th>Members</th><th>Priority</th></tr></thead>
+      <tbody>
+            <tr><td><b>HH-1001</b><small>Maria Santos</small></td><td>Purok 1</td><td><span class="risk Danger">Danger</span></td><td>5</td><td><span class="priority HIGH">HIGH</span></td></tr>
+            <tr><td><b>HH-1002</b><small>Juan Dela Cruz</small></td><td>Purok 3</td><td><span class="risk Caution">Caution</span></td><td>4</td><td><span class="priority NORMAL">NORMAL</span></td></tr>
+            <tr><td><b>HH-1003</b><small>Ana Reyes</small></td><td>Purok 5</td><td><span class="risk Safe">Safe</span></td><td>3</td><td><span class="priority NORMAL">NORMAL</span></td></tr>
+            </tbody></table>
+    </div>
+  </div>
+</section>
+
+<section class="grid lg:grid-cols-[.85fr_1.15fr] gap-4 mb-4">
+  <div class="panel p-5">
+    <div class="section-label">OFFLINE-FIRST SMS</div>
+    <h2 class="big-section">SOS ingestion</h2>
+    <p class="muted">A GSM gateway or SMS bridge can POST inbound messages to <code>sms_ingest.php</code>. The parser stores the event even when citizens have no internet access.</p>
+    <div class="codebox">SOS Maria Santos | Purok 1 | MEDICAL: insulin</div>
+    <div class="flex gap-2 mt-4">
+      <a href="sms.php" class="btn btn-orange">Open SMS console</a>      <a href="sms_ingest.php?demo=1" target="_blank" class="btn btn-ghost">Demo endpoint</a>
+    </div>
+  </div>
+  <div class="panel p-5">
+    <div class="panel-head no-border"><div><h2>Relief & Donation Ledger</h2><p>Track received, distributed and remaining units.</p></div><a href="#relief" class="mini">View ledger</a></div>
+    <div class="table-wrap"><table><thead><tr><th>Item</th><th>Received</th><th>Distributed</th><th>Remaining</th></tr></thead><tbody>
+          <tr><td><b>Family Relief Pack</b><small>Food</small></td><td>500</td><td>312</td><td><span class="remaining">188</span></td></tr>
+          <tr><td><b>Drinking Water</b><small>Water</small></td><td>1,000</td><td>645</td><td><span class="remaining">355</span></td></tr>
+          <tr><td><b>Hygiene Kit</b><small>Hygiene</small></td><td>300</td><td>97</td><td><span class="remaining">203</span></td></tr>
+        </tbody></table></div>
+  </div>
+</section>
+
+<section id="relief" class="panel p-5 mb-8">
+  <div class="flex flex-col md:flex-row justify-between gap-4 mb-5"><div><div class="section-label">PUBLIC ACCOUNTABILITY</div><h2 class="big-section">Transparent distribution trail</h2><p class="muted">Every issue can be linked to a family code and digital receipt.</p></div>
+          <a href="relief.php" class="btn btn-orange">Manage ledger →</a>
+      </div>
+  <div class="grid md:grid-cols-3 gap-3">
+    <div class="mini-card"><span>Incoming batches</span><b>3</b></div>
+    <div class="mini-card"><span>Tracked received units</span><b>1,800</b></div>
+    <div class="mini-card"><span>Remaining units</span><b>746</b></div>
+  </div>
+</section>
+
+<footer>VetraDRR prototype • PHP + MySQL + Tailwind + Leaflet • For demonstration; verify official warnings before emergency use.</footer>
+</div>
+<script>
+const households = [{"family_code":"HH-1001","head_name":"Maria Santos","purok":"Purok 1","latitude":10.3157,"longitude":123.8854,"risk_level":"Danger","members":5},{"family_code":"HH-1002","head_name":"Juan Dela Cruz","purok":"Purok 3","latitude":10.3212,"longitude":123.8971,"risk_level":"Caution","members":4},{"family_code":"HH-1003","head_name":"Ana Reyes","purok":"Purok 5","latitude":10.3075,"longitude":123.8722,"risk_level":"Safe","members":3}];
+const centers = [{"name":"Barangay Hall Gym","barangay":"Barangay Central","latitude":10.318,"longitude":123.89,"capacity":200,"current_occupancy":188,"status":"Warning"},{"name":"East Central School","barangay":"Barangay East","latitude":10.326,"longitude":123.902,"capacity":350,"current_occupancy":126,"status":"Open"},{"name":"West Community Center","barangay":"Barangay West","latitude":10.304,"longitude":123.875,"capacity":150,"current_occupancy":150,"status":"Full"}];
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

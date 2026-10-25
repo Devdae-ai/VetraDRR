@@ -1,0 +1,10 @@
+<?php
+require_once "config.php";
+require_once "helpers.php";
+require_login(['admin']);
+
+$reports = db_rows($conn, "SELECT * FROM sms_reports ORDER BY created_at DESC LIMIT 20", []);
+?>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SMS Console — VetraDRR</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="app.css"></head>
+<body class="bg-ink text-white min-h-screen"><div class="max-w-6xl mx-auto px-5 py-8"><div class="flex items-center justify-between gap-3"><a href="index.php" class="text-gray-500 text-sm">← Dashboard</a><a href="logout.php" class="btn btn-ghost">Logout</a></div><div class="mt-7 panel p-6"><div class="section-label">OFFLINE-FIRST EMERGENCY CHANNEL</div><h1 class="text-4xl font-bold mt-2">SMS Incident Console</h1><p class="muted mt-2">Inbound GSM/SMS bridge messages can be parsed and stored here.</p><form method="post" action="sms_ingest.php" class="grid md:grid-cols-2 gap-3 mt-6"><input name="sender" class="bg-black border border-gray-800 rounded-xl p-3" placeholder="+639xxxxxxxxx" required><input name="message" class="bg-black border border-gray-800 rounded-xl p-3" placeholder="SOS Maria Santos | Purok 1 | MEDICAL: insulin" required><button class="btn btn-orange md:col-span-2">Parse & Log SMS</button></form></div>
+<div class="panel p-6 mt-4"><h2 class="text-xl font-semibold mb-4">Recent inbound reports</h2><div class="table-wrap"><table><thead><tr><th>Time</th><th>Sender</th><th>Citizen</th><th>Location</th><th>Need</th><th>Status</th></tr></thead><tbody><?php foreach($reports as $r):?><tr><td><?=e($r['created_at'])?></td><td><?=e($r['sender_number'])?></td><td><?=e($r['citizen_name'])?></td><td><?=e($r['location_text'])?></td><td><?=e($r['need_text'])?></td><td><?=e($r['status'])?></td></tr><?php endforeach;?></tbody></table></div></div></div></body></html>
